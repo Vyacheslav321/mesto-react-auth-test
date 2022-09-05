@@ -8,8 +8,8 @@ const Login = ({ onLogin }) => {
   const history = useHistory();
 
   const handleSubmit = (e) => {
-    e.perventDefault();
-    onLogin({password, email})
+    e.preventDefault();
+    onLogin({email, password})
     .then(() => {
       history.push('/')
     })
@@ -27,19 +27,21 @@ const Login = ({ onLogin }) => {
       <p className="register__welcome">Вход</p>
       <p className="register__error">{message}</p>
       <form className="register__form" onSubmit={handleSubmit}>
-        <label for="email">Email</label>
+        <label htmlFor="email">Email</label>
         <input
           id="email"
           name="email"
           type="email"
+          autoComplete="email" 
           value={email}
           onChange={({ target }) => setEmail(target.value)}
         />
-        <label for="password">Пароль</label>
+        <label htmlFor="password">Пароль</label>
         <input
           id="password"
           name="password"
           type="password"
+          autoComplete="current-password" 
           value={password}
           onChange={({ target }) => setPassword(target.value)}
         />
