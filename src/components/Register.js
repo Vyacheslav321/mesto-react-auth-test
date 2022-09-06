@@ -11,7 +11,7 @@ const Register = ({ onRegister }) => {
     evt.preventDefault();
     onRegister({ email, password })
       .then(() => {
-        history.push("/sign-in")
+        history.push("/sign-in");
       })
       .catch((err) => {
         setMessage("Ошибка " + err.mesage || "Что-то пошло не так");
@@ -23,8 +23,8 @@ const Register = ({ onRegister }) => {
       <p className="register__welcome">Регистрация</p>
       <p className="register__message">{message}</p>
       <form className="register__form" onSubmit={handleSubmit}>
-        <label htmlFor="email">Email</label>
         <input
+          className="register__input"
           id="email"
           name="email"
           type="email"
@@ -32,8 +32,11 @@ const Register = ({ onRegister }) => {
           value={email}
           onChange={({ target }) => setEmail(target.value)}
         />
-        <label htmlFor="password">Пароль</label>
+        <span id="register-email-error" className="error">
+          Email
+        </span>
         <input
+          className="register__input"
           id="password"
           name="password"
           type="password"
@@ -41,18 +44,21 @@ const Register = ({ onRegister }) => {
           value={password}
           onChange={({ target }) => setPassword(target.value)}
         />
+        <span id="register-password-error" className="error">
+          Пароль
+        </span>
         <div className="register__button-container">
           <button className="register__link" type="submit">
             Зарегистрироваться
           </button>
         </div>
       </form>
-      <div className="register__signin">
-        <p>Уже зарегистрированы?</p>
+      <p className="register__signin">
+        Уже зарегистрированы?
         <Link to="sign-in" className="register__login-link">
           Войти
         </Link>
-      </div>
+      </p>
     </section>
   );
 };
