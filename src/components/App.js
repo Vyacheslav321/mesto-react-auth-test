@@ -3,7 +3,7 @@ import Header from "./Header";
 import Main from "./Main";
 import Login from "./Login";
 import Register from "./Register";
-// import InfoTooltip from "./InfoTooltip";
+import InfoTooltip from "./InfoTooltip";
 import Footer from "./Footer";
 import AddPlacePopup from "./AddPlacePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
@@ -18,6 +18,7 @@ import {
   Switch,
   Redirect,
   useHistory,
+  HashRouter,
 } from "react-router-dom";
 // import PageNotFound from "./PageNotFound";
 
@@ -26,7 +27,7 @@ const App = () => {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isImagePopupOpen, setisImagePopupOpen] = useState(false);
-  // const [isInfoTooltipPopupOpen, setInfoTooltipPopupOpen] = React.useState(false);
+  const [isInfoPopupOpen, setInfoPopupOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState({
     name: " ",
     about: " ",
@@ -35,8 +36,9 @@ const App = () => {
   const [cards, setCards] = useState([]);
   const [selectedCard, setSelectedCard] = useState({});
   // const [isLoading, setIsLoading] = React.useState(false);
+  const [isReg, setIsReg] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
-  const [email, setEmail] = useState('')
+  const [email, setEmail] = useState("");
   const history = useHistory();
 
   useEffect(() => {
@@ -172,6 +174,7 @@ const App = () => {
     setIsAddPlacePopupOpen(false);
     setisImagePopupOpen(false);
     setSelectedCard({});
+    setInfoPopupOpen(false);
   }
 
   useEffect(() => {
@@ -180,10 +183,17 @@ const App = () => {
     }
   }, [loggedIn]);
 
-  const onRegister = ({email, password}) => {
-    return register(email, password).then((res) => {
+  const onRegister = ({ email, password }) => {
+    return register(email, password)
+    .then((res) => {
+      setInfoPopupOpen(true);
+      setIsReg(true);
       return res;
-    });
+    })
+    .catch(() => {
+      setIsReg(false);
+      setInfoPopupOpen(true);
+    })
   };
 
   const onLogin = ({ email, password }) => {
@@ -198,63 +208,68 @@ const App = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-      if (token) {
-        getToken(token)
-        .then((res) => {
-          if (res) {
-            setEmail({ email: res.email })
-            setLoggedIn(true);
-          }
-        })
-      }
+    if (token) {
+      getToken(token).then((res) => {
+        if (res) {
+          setEmail({ email: res.email });
+          setLoggedIn(true);
+        }
+      });
+    }
   }, [loggedIn]);
 
-
   const handleExit = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
     setLoggedIn(false);
-  }
+  };
 
   return (
     <div className="page">
       <CurrentUserContext.Provider value={currentUser}>
-        <Header
-        email={email}
-        onExit={handleExit}
-        />
-        <Switch>
-          <ProtectedRoute
-            exact path="/"
-            loggedIn={loggedIn}
-            component={Main}
-            onEditAvatar={handleEditAvatarClick}
-            onEditProfile={handleEditProfileClick}
-            onAddPlace={handleAddPlaceClick}
-            onCardClick={handleCardClick}
-            onCardLike={handleCardLike}
-            onCardDelete={handleCardDelete}
-            cards={cards}
-          />
-          {/* роут для регистрации */}
-          <Route path="/sign-up">
+        <HashRouter>
+          <Header email={email} onExit={handleExit} />
+          <Switch>
+            <ProtectedRoute
+              exact
+              path="/"
+              loggedIn={loggedIn}
+              component={Main}
+              onEditAvatar={handleEditAvatarClick}
+              onEditProfile={handleEditProfileClick}
+              onAddPlace={handleAddPlaceClick}
+              onCardClick={handleCardClick}
+              onCardLike={handleCardLike}
+              onCardDelete={handleCardDelete}
+              cards={cards}
+            />
+            {/* роут для регистрации */}
+            <Route path="/sign-up">
               <Register onRegister={onRegister} />
-          </Route>
-          {/* роут для авторизации */}
-          <Route path="/sign-in">
+            </Route>
+            {/* роут для авторизации */}
+            <Route path="/sign-in">
               <Login onLogin={onLogin} />
-          </Route>
-          {/* сделать на рефакторинг
+            </Route>
+            <Route exact path="/">
+              {loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-up" />}
+            </Route>
+            {/* сделать на рефакторинг
           <Route path='*'>
             <PageNotFound />
           </Route> */}
-          <Route path="/">
-            {loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}
+          </Switch>
+          <Route exact path="/">
+            <Footer />
           </Route>
-        </Switch>
-        <Route exact path='/'>
-          <Footer />
-        </Route>
+        </HashRouter>
 
+        <InfoTooltip
+          isOPen={isInfoPopupOpen}
+          onClose={closeAllPopups}
+          isReg={isReg}
+          okText="Вы успешно зарегистрировались!"
+          errText="Что-то пошло не так! Попробуйте ещё раз."
+        />
         <EditAvatarPopup
           isOpen={isEditAvatarPopupOpen}
           onClose={closeAllPopups}

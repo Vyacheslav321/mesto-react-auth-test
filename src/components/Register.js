@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useHistory } from "react-router-dom";
+import { withRouter, Link, useHistory } from "react-router-dom";
 
 const Register = ({ onRegister }) => {
   const [email, setEmail] = useState("");
@@ -32,9 +32,7 @@ const Register = ({ onRegister }) => {
           value={email}
           onChange={({ target }) => setEmail(target.value)}
         />
-        <span id="register-email-error" className="error">
-          Email
-        </span>
+        <span id="register-email-error" className="error"></span>
         <input
           className="register__input"
           id="password"
@@ -44,9 +42,7 @@ const Register = ({ onRegister }) => {
           value={password}
           onChange={({ target }) => setPassword(target.value)}
         />
-        <span id="register-password-error" className="error">
-          Пароль
-        </span>
+        <span id="register-password-error" className="error"></span>
         <div className="register__button-container">
           <button className="register__link" type="submit">
             Зарегистрироваться
@@ -55,7 +51,7 @@ const Register = ({ onRegister }) => {
       </form>
       <p className="register__signin">
         Уже зарегистрированы?
-        <Link to="sign-in" className="register__login-link">
+        <Link to="/sign-in" className="register__login-link">
           Войти
         </Link>
       </p>
@@ -63,4 +59,4 @@ const Register = ({ onRegister }) => {
   );
 };
 
-export default Register;
+export default withRouter(Register);

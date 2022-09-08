@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
+import { withRouter, useHistory } from "react-router-dom";
 
 const Login = ({ onLogin }) => {
   const [email, setEmail] = useState("");
@@ -63,4 +63,4 @@ const Login = ({ onLogin }) => {
   );
 };
 
-export default Login;
+export default withRouter(Login);
