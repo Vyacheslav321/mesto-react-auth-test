@@ -185,15 +185,15 @@ const App = () => {
 
   const onRegister = ({ email, password }) => {
     return register(email, password)
-    .then((res) => {
-      setInfoPopupOpen(true);
-      setIsReg(true);
-      return res;
-    })
-    .catch(() => {
-      setIsReg(false);
-      setInfoPopupOpen(true);
-    })
+      .then((res) => {
+        setInfoPopupOpen(true);
+        setIsReg(true);
+        return res;
+      })
+      .catch(() => {
+        setIsReg(false);
+        setInfoPopupOpen(true);
+      });
   };
 
   const onLogin = ({ email, password }) => {
