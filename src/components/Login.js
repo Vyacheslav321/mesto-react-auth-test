@@ -11,15 +11,13 @@ const Login = ({ onLogin }) => {
     e.preventDefault();
     onLogin({ email, password })
       .then(() => {
-        history.push("/");
-      })
-      .then(() => {
         setEmail("");
         setPassword("");
+        history.push("/");
       })
       .catch((err) => {
         setMessage(err);
-      });
+      })
   };
 
   return (
@@ -34,12 +32,11 @@ const Login = ({ onLogin }) => {
           name="email"
           type="email"
           autoComplete="email"
+          placeholder="Email"
           value={email}
           onChange={({ target }) => setEmail(target.value)}
         />
-        <span id="register-email-error" className="error">
-          Email
-        </span>
+        {/* <span id="register-email-error" className="register__error"></span> */}
         {/* <label htmlFor="password">Пароль</label> */}
         <input
           className="register__input"
@@ -47,12 +44,11 @@ const Login = ({ onLogin }) => {
           name="password"
           type="password"
           autoComplete="current-password"
+          placeholder="Пароль"
           value={password}
           onChange={({ target }) => setPassword(target.value)}
         />
-        <span id="register-password-error" className="error">
-          Email
-        </span>
+        {/* <span id="register-password-error" className="register__error"></span> */}
         <div className="register__button-container">
           <button className="register__link" type="submit">
             Войти

@@ -27,7 +27,7 @@ const App = () => {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isImagePopupOpen, setisImagePopupOpen] = useState(false);
-  const [isInfoPopupOpen, setInfoPopupOpen] = useState(false);
+  const [infoPopupOpen, setInfoPopupOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState({
     name: " ",
     about: " ",
@@ -41,6 +41,46 @@ const App = () => {
   const [email, setEmail] = useState("");
   const history = useHistory();
 
+  const onRegister = ({ email, password }) => {
+    register(email, password)
+      .then((data) => {
+        setIsReg(true);
+        setInfoPopupOpen(true);
+        setEmail(data.email);
+        console.log("email register:" + email);
+      })
+      .catch((err) => {
+        setIsReg(false);
+        setInfoPopupOpen(true);
+      });
+  };
+
+  const onLogin = ({ email, password }) => {
+    return authorize(email, password).then((res) => {
+      if (res) {
+        localStorage.setItem("token", res.token);
+        setLoggedIn(true);
+      }
+    });
+  };
+
+  // проверка валидности токена и получения email
+  useEffect(() => {
+    if (loggedIn) {
+      const token = localStorage.getItem("token");
+      console.log("token:" + token);
+      if (token) {
+        getToken(token).then((data) => {
+          if (data) {
+            setEmail(data.email);
+            console.log("email checked:" + data.email);
+            setLoggedIn(true);
+          }
+        });
+      }
+    }
+  }, [loggedIn]);
+
   useEffect(() => {
     Promise.all([api.getUserInfo(), api.getCards()])
       .then(([userInfo, cardData]) => {
@@ -51,7 +91,7 @@ const App = () => {
       .catch((err) => {
         console.log(`Ошибка загрузки данных ${err}`);
       });
-  }, []);
+  }, [loggedIn]);
 
   function handleEditAvatarClick() {
     setIsEditAvatarPopupOpen(true);
@@ -154,7 +194,8 @@ const App = () => {
       isEditAvatarPopupOpen ||
       isEditProfilePopupOpen ||
       isAddPlacePopupOpen ||
-      isImagePopupOpen
+      isImagePopupOpen ||
+      infoPopupOpen
     ) {
       window.addEventListener("keydown", handleEscClose);
     }
@@ -166,6 +207,7 @@ const App = () => {
     isEditProfilePopupOpen,
     isAddPlacePopupOpen,
     isImagePopupOpen,
+    infoPopupOpen,
   ]);
 
   function closeAllPopups() {
@@ -178,44 +220,7 @@ const App = () => {
   }
 
   useEffect(() => {
-    if (loggedIn) {
-      history.push("/");
-    }
-  }, [loggedIn]);
-
-  const onRegister = ({ email, password }) => {
-    return register(email, password)
-      .then((res) => {
-        setInfoPopupOpen(true);
-        setIsReg(true);
-        return res;
-      })
-      .catch(() => {
-        setIsReg(false);
-        setInfoPopupOpen(true);
-      });
-  };
-
-  const onLogin = ({ email, password }) => {
-    return authorize(email, password).then((res) => {
-      if (res.token) {
-        localStorage.setItem("token", res.token);
-        setLoggedIn(true);
-        setEmail(email);
-      }
-    });
-  };
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      getToken(token).then((res) => {
-        if (res) {
-          setEmail({ email: res.email });
-          setLoggedIn(true);
-        }
-      });
-    }
+    loggedIn ? history.push("/") : history.push("/sign-in");
   }, [loggedIn]);
 
   const handleExit = () => {
@@ -264,7 +269,7 @@ const App = () => {
         </HashRouter>
 
         <InfoTooltip
-          isOPen={isInfoPopupOpen}
+          isOpen={infoPopupOpen}
           onClose={closeAllPopups}
           isReg={isReg}
           okText="Вы успешно зарегистрировались!"

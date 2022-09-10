@@ -1,6 +1,6 @@
 .register__input {
-  margin: 25px 0 0 0;
-  padding: 2px 0;
+  margin: 26px 0 0 0;
+  padding: 0 0 4px 0;
   height: 25px;
   border: 0;
   border-bottom: 2px solid #ccc;
@@ -11,4 +11,5 @@
   line-height: 17px;
   background-color: #000;
   color: #ccc;
+  position: relative;
 }
