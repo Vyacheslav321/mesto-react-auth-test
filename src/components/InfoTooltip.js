@@ -2,13 +2,23 @@ import React from "react";
 import good from "../images/infiToolTip__Good.png";
 import bad from "../images/infiToolTip__Bad.png";
 
-function InfoToolTip({ isOpen, isReg, okText, errText, onClose }) {
+function InfoToolTip({ isOpen, isReg, okText, errText, onClose, message }) {
+  // клик по оверлею для закрытия
+  const handleOverlayClick = (evt) => {
+    if (evt.target === evt.currentTarget) {
+      onClose();
+    }
+  };
 
+  console.log(message)
   return (
-    <div className={isOpen ? "popup popup_opened" : "popup"}>
+    <div
+      className={isOpen ? "popup popup_opened" : "popup"}
+      onClick={handleOverlayClick}
+    >
       <div className="popup__container popup__container_type_message">
         <button
-          class="popup__close-button popup__close-button_type_edit-pic"
+          className="popup__close-button popup__close-button_type_edit-pic"
           type="button"
           aria-label="Закрыть"
           onClick={onClose}
@@ -18,7 +28,8 @@ function InfoToolTip({ isOpen, isReg, okText, errText, onClose }) {
           src={isReg ? good : bad}
           alt={isReg ? "Успешная регистрация" : "Ошибка регистрации"}
         />
-        <p className="popup__info-text">{isReg ? okText : errText}</p>
+        {/* <p className="popup__info-text">{isReg ? okText : errText}</p> */}
+        <p className="popup__info-text">{isReg ? okText : message}</p>
       </div>
     </div>
   );

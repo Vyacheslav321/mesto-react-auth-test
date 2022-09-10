@@ -7,11 +7,19 @@ function PopupWithForm({
   buttonText,
   children,
 }) {
+  // клик по оверлею для закрытия
+  const handleOverlayClick = (evt) => {
+    if (evt.target === evt.currentTarget) {
+      onClose();
+    }
+  };
+
   return (
     <section
       className={
         `popup popup_type_${name} ` + (isOpen === true ? "popup_opened" : "")
       }
+      onClick={handleOverlayClick}
     >
       <div className="popup__container popup__container_type_input">
         <button

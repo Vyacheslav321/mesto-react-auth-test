@@ -17,8 +17,8 @@ import {
   Route,
   Switch,
   Redirect,
-  useHistory,
   HashRouter,
+  useHistory
 } from "react-router-dom";
 // import PageNotFound from "./PageNotFound";
 
@@ -39,17 +39,19 @@ const App = () => {
   const [isReg, setIsReg] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
   const [email, setEmail] = useState("");
+  const [message, setMessage] = useState('');
   const history = useHistory();
 
   const onRegister = ({ email, password }) => {
-    register(email, password)
+    return register(email, password)
       .then((data) => {
         setIsReg(true);
         setInfoPopupOpen(true);
         setEmail(data.email);
-        console.log("email register:" + email);
+        history.push("/sign-in");
       })
       .catch((err) => {
+        setMessage(err.message);
         setIsReg(false);
         setInfoPopupOpen(true);
       });
@@ -68,12 +70,10 @@ const App = () => {
   useEffect(() => {
     if (loggedIn) {
       const token = localStorage.getItem("token");
-      console.log("token:" + token);
       if (token) {
-        getToken(token).then((data) => {
-          if (data) {
-            setEmail(data.email);
-            console.log("email checked:" + data.email);
+        getToken(token).then((res) => {
+          if (res) {
+            setEmail(res.data.email);
             setLoggedIn(true);
           }
         });
@@ -220,7 +220,11 @@ const App = () => {
   }
 
   useEffect(() => {
-    loggedIn ? history.push("/") : history.push("/sign-in");
+    if (loggedIn) {
+      history.push('/');
+    } else {
+      history.push('/sign-in');
+    }
   }, [loggedIn]);
 
   const handleExit = () => {
@@ -232,7 +236,7 @@ const App = () => {
     <div className="page">
       <CurrentUserContext.Provider value={currentUser}>
         <HashRouter>
-          <Header email={email} onExit={handleExit} />
+          <Header eemail={email} onExit={handleExit} />
           <Switch>
             <ProtectedRoute
               exact
@@ -274,6 +278,7 @@ const App = () => {
           isReg={isReg}
           okText="Вы успешно зарегистрировались!"
           errText="Что-то пошло не так! Попробуйте ещё раз."
+          message={message}
         />
         <EditAvatarPopup
           isOpen={isEditAvatarPopupOpen}

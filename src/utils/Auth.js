@@ -1,47 +1,50 @@
-const BASE_URL = 'https://auth.nomoreparties.co';
+const BASE_URL = "https://auth.nomoreparties.co";
+
+// function checkResOk(res) {
+//   if (res.ok) {
+//     return res.json();
+//   }
+//   return Promise.reject(`Ошибка: ${res.status}`);
+// }
 
 function checkResOk(res) {
   if (res.ok) {
-      return res.json();
+    return res.json();
   }
-  return Promise.reject(`Ошибка: ${res.status}`);
-};
+
+  return res.json().then((err) => {
+    err.code = res.status;
+
+    return Promise.reject(err);
+  });
+}
 
 export const register = (email, password) => {
   return fetch(`${BASE_URL}/signup`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify({email, password})
-  })
-  .then(checkResOk)
+    body: JSON.stringify({ email, password }),
+  }).then(checkResOk);
 };
 
 export const authorize = (email, password) => {
   return fetch(`${BASE_URL}/signin`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify({email, password})
-  })
-  .then(checkResOk)
-  // .then((data) => {
-  //   if (data.token) {
-  //     localStorage.setItem('token', data.token);
-  //     return data;
-  //   }
-  // })
+    body: JSON.stringify({ email, password }),
+  }).then(checkResOk);
 };
 
 export const getToken = (token) => {
-  return fetch (`${BASE_URL}/users/me`, {
-    metod: 'GET',
+  return fetch(`${BASE_URL}/users/me`, {
+    metod: "GET",
     headers: {
       "Content-Type": "application/json",
-      "Authorization" : `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     },
-  })
-  .then(checkResOk)
+  }).then(checkResOk);
 };
